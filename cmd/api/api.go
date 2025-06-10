@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/marioanchevski/docu-reach/cmd/api/document"
 	"github.com/marioanchevski/docu-reach/cmd/api/health"
 	"github.com/marioanchevski/docu-reach/config"
+	store "github.com/marioanchevski/docu-reach/repository/document"
 )
 
 type APIServer struct {
@@ -22,12 +24,19 @@ func NewAPIServer(cfg *config.Config) *APIServer {
 func (s *APIServer) Run() error {
 	mux := http.NewServeMux()
 
+	v1 := http.NewServeMux()
+	v1.Handle("/api/v1/", http.StripPrefix("/api/v1", mux))
+
+	documentStore := store.NewInMemoryDocumentStore()
+	documentHandler := document.NewHandler(documentStore)
+	documentHandler.RegisterRoutes(mux)
+
 	health := health.NewHealthHandler()
-	health.RegisterRoutes(mux)
+	health.RegisterRoutes(v1)
 
 	server := &http.Server{
 		Addr:         s.config.ListenAddr,
-		Handler:      mux,
+		Handler:      v1,
 		WriteTimeout: time.Second * 10,
 		ReadTimeout:  time.Second * 5,
 		IdleTimeout:  time.Minute,
