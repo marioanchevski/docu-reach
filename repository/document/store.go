@@ -21,11 +21,24 @@ func NewInMemoryDocumentStore() *InMemoryDocumentStore {
 }
 
 func (ds *InMemoryDocumentStore) FindAll() []*types.Document {
-	return nil
+	ds.m.RLock()
+	defer ds.m.RUnlock()
+	resultSlice := make([]*types.Document, 0, len(ds.documents))
+	for _, value := range ds.documents {
+		resultSlice = append(resultSlice, value)
+	}
+	return resultSlice
 }
 
 func (ds *InMemoryDocumentStore) FindById(docId int) *types.Document {
-	return nil
+	ds.m.RLock()
+	defer ds.m.RUnlock()
+
+	value, ok := ds.documents[docId]
+	if !ok {
+		return nil
+	}
+	return value
 }
 
 func (ds *InMemoryDocumentStore) Create(docRequest types.CreateDocumentRequest) *types.Document {
