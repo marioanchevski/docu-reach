@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/marioanchevski/docu-reach/cmd/api/health"
 	"github.com/marioanchevski/docu-reach/config"
 )
 
@@ -20,6 +21,9 @@ func NewAPIServer(cfg *config.Config) *APIServer {
 
 func (s *APIServer) Run() error {
 	mux := http.NewServeMux()
+
+	health := health.NewHealthHandler()
+	health.RegisterRoutes(mux)
 
 	server := &http.Server{
 		Addr:         s.config.ListenAddr,
