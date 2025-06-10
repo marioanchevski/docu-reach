@@ -57,7 +57,15 @@ func (ds *InMemoryDocumentStore) Create(docRequest types.CreateDocumentRequest) 
 }
 
 func (ds *InMemoryDocumentStore) DeleteById(id int) bool {
-	return false
+	ds.m.Lock()
+	defer ds.m.Unlock()
+	_, ok := ds.documents[id]
+	if !ok {
+		return false
+	}
+
+	delete(ds.documents, id)
+	return true
 }
 
 func (ds *InMemoryDocumentStore) Search(query string) []*types.Document {

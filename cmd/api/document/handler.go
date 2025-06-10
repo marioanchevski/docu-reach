@@ -59,6 +59,22 @@ func (h *Handler) FindAllDocumentsHandler(w http.ResponseWriter, r *http.Request
 	utils.WriteSuccessResponse(w, http.StatusOK, "SUCCESS", h.documentStore.FindAll())
 }
 
+func (h *Handler) DeleteDocumentByIdHandler(w http.ResponseWriter, r *http.Request) {
+
+	id, err := getIdRequestParam(r)
+	if err != nil {
+		utils.WriteErrorResponse[any](w, http.StatusBadRequest, "Invalid Id format") // ToDo maybe return 404 for security purposes
+		return
+	}
+
+	if ok := h.documentStore.DeleteById(id); !ok {
+		utils.WriteErrorResponse[any](w, http.StatusNotFound, fmt.Sprintf("Unable to find document with id: %v", id))
+		return
+	}
+
+	utils.WriteSuccessResponse[any](w, http.StatusOK, "Document deleted", nil)
+}
+
 func getIdRequestParam(r *http.Request) (int, error) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
