@@ -8,6 +8,7 @@ import (
 	"github.com/marioanchevski/docu-reach/cmd/api/document"
 	"github.com/marioanchevski/docu-reach/cmd/api/health"
 	"github.com/marioanchevski/docu-reach/config"
+	"github.com/marioanchevski/docu-reach/middleware"
 	store "github.com/marioanchevski/docu-reach/repository/document"
 )
 
@@ -36,7 +37,7 @@ func (s *APIServer) Run() error {
 
 	server := &http.Server{
 		Addr:         s.config.ListenAddr,
-		Handler:      v1,
+		Handler:      middleware.Logging(v1),
 		WriteTimeout: time.Second * 10,
 		ReadTimeout:  time.Second * 5,
 		IdleTimeout:  time.Minute,
