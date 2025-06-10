@@ -11,6 +11,14 @@ type Document struct {
 	Description string `json:"description"`
 }
 
+type DocumentFilter struct {
+	TitleInclude []string
+	TitleExclude []string
+	DescInclude  []string
+	DescExclude  []string
+	Operator     string
+}
+
 type CreateDocumentRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -43,5 +51,5 @@ type DocumentStore interface {
 	FindAll() []*Document
 	Create(document CreateDocumentRequest) *Document
 	DeleteById(id int) error
-	Search(query string) []*Document
+	Filter(docFilter DocumentFilter) []*Document
 }

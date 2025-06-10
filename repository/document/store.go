@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/marioanchevski/docu-reach/service/matcher"
 	"github.com/marioanchevski/docu-reach/types"
 )
 
@@ -69,6 +70,16 @@ func (ds *InMemoryDocumentStore) DeleteById(id int) error {
 	return nil
 }
 
-func (ds *InMemoryDocumentStore) Search(query string) []*types.Document {
-	return nil
+func (ds *InMemoryDocumentStore) Filter(docFilter types.DocumentFilter) []*types.Document {
+
+	var result []*types.Document = make([]*types.Document, 0)
+	ds.m.RLock()
+	defer ds.m.RUnlock()
+	for _, doc := range ds.documents {
+		if matcher.DocumentSatisfiesFilter(doc, docFilter) {
+			result = append(result, doc)
+		}
+
+	}
+	return result
 }
