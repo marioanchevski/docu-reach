@@ -39,9 +39,9 @@ type APIError struct {
 }
 
 type DocumentStore interface {
-	FindById(id int) *Document
+	FindById(id int) (*Document, error)
 	FindAll() []*Document
 	Create(document CreateDocumentRequest) *Document
-	DeleteById(id int) bool
+	DeleteById(id int) error
 	Search(query string) []*Document
 }

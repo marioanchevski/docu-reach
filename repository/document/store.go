@@ -1,6 +1,7 @@
 package document
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/marioanchevski/docu-reach/types"
@@ -30,15 +31,15 @@ func (ds *InMemoryDocumentStore) FindAll() []*types.Document {
 	return resultSlice
 }
 
-func (ds *InMemoryDocumentStore) FindById(docId int) *types.Document {
+func (ds *InMemoryDocumentStore) FindById(docId int) (*types.Document, error) {
 	ds.m.RLock()
 	defer ds.m.RUnlock()
 
-	value, ok := ds.documents[docId]
+	document, ok := ds.documents[docId]
 	if !ok {
-		return nil
+		return nil, fmt.Errorf("Unable to find document with id: %v", docId)
 	}
-	return value
+	return document, nil
 }
 
 func (ds *InMemoryDocumentStore) Create(docRequest types.CreateDocumentRequest) *types.Document {
@@ -56,16 +57,16 @@ func (ds *InMemoryDocumentStore) Create(docRequest types.CreateDocumentRequest) 
 	return newDoc
 }
 
-func (ds *InMemoryDocumentStore) DeleteById(id int) bool {
+func (ds *InMemoryDocumentStore) DeleteById(id int) error {
 	ds.m.Lock()
 	defer ds.m.Unlock()
 	_, ok := ds.documents[id]
 	if !ok {
-		return false
+		return fmt.Errorf("Unable to find document with id: %v", id)
 	}
 
 	delete(ds.documents, id)
-	return true
+	return nil
 }
 
 func (ds *InMemoryDocumentStore) Search(query string) []*types.Document {

@@ -45,9 +45,9 @@ func (h *Handler) FindDocumetByIdHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	document := h.documentStore.FindById(id)
-	if document == nil {
-		utils.WriteErrorResponse[any](w, http.StatusNotFound, fmt.Sprintf("Unable to find document with id: %v", id))
+	document, err := h.documentStore.FindById(id)
+	if err != nil {
+		utils.WriteErrorResponse[any](w, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -67,8 +67,8 @@ func (h *Handler) DeleteDocumentByIdHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if ok := h.documentStore.DeleteById(id); !ok {
-		utils.WriteErrorResponse[any](w, http.StatusNotFound, fmt.Sprintf("Unable to find document with id: %v", id))
+	if err := h.documentStore.DeleteById(id); err != nil {
+		utils.WriteErrorResponse[any](w, http.StatusNotFound, err.Error())
 		return
 	}
 
