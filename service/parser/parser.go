@@ -10,6 +10,8 @@ func NewSimpleSignParser() SimpleSignParser {
 }
 
 func (SimpleSignParser) ParseSearchTerms(searchString string) (include, exclude []string) {
+	include = []string{}
+	exclude = []string{}
 	terms := strings.SplitSeq(searchString, ",")
 	for term := range terms {
 		term = strings.TrimSpace(term)
@@ -22,5 +24,5 @@ func (SimpleSignParser) ParseSearchTerms(searchString string) (include, exclude 
 			include = append(include, strings.TrimSpace(term))
 		}
 	}
-	return
+	return include, exclude
 }
