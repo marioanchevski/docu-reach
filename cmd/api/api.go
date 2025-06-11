@@ -10,6 +10,8 @@ import (
 	"github.com/marioanchevski/docu-reach/config"
 	"github.com/marioanchevski/docu-reach/middleware"
 	store "github.com/marioanchevski/docu-reach/repository/document"
+	"github.com/marioanchevski/docu-reach/service/matcher"
+	"github.com/marioanchevski/docu-reach/service/parser"
 )
 
 type APIServer struct {
@@ -28,8 +30,11 @@ func (s *APIServer) Run() error {
 	v1 := http.NewServeMux()
 	v1.Handle("/api/v1/", http.StripPrefix("/api/v1", mux))
 
-	documentStore := store.NewInMemoryDocumentStore()
-	documentHandler := document.NewHandler(documentStore)
+	fuzzy := matcher.NewFuzzyMatcher()
+	documentStore := store.NewInMemoryDocumentStore(fuzzy)
+
+	simpleSignParser := parser.NewSimpleSignParser()
+	documentHandler := document.NewHandler(documentStore, simpleSignParser)
 	documentHandler.RegisterRoutes(mux)
 
 	health := health.NewHealthHandler()

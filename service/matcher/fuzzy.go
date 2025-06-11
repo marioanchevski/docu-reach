@@ -6,7 +6,14 @@ import (
 	"github.com/marioanchevski/docu-reach/types"
 )
 
-func DocumentSatisfiesFilter(doc *types.Document, df types.DocumentFilter) bool {
+type FuzzyMatcher struct {
+}
+
+func NewFuzzyMatcher() FuzzyMatcher {
+	return FuzzyMatcher{}
+}
+
+func (FuzzyMatcher) DocumentSatisfiesFilter(doc *types.Document, df types.DocumentFilter) bool {
 	titleMatch := matchField(doc.Title, df.TitleInclude, df.TitleExclude)
 	descMatch := matchField(doc.Description, df.DescInclude, df.DescExclude)
 

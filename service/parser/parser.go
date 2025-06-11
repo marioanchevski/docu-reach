@@ -2,7 +2,14 @@ package parser
 
 import "strings"
 
-func ParseSearchTerms(searchString string) (include, exclude []string) {
+type SimpleSignParser struct {
+}
+
+func NewSimpleSignParser() SimpleSignParser {
+	return SimpleSignParser{}
+}
+
+func (SimpleSignParser) ParseSearchTerms(searchString string) (include, exclude []string) {
 	terms := strings.SplitSeq(searchString, ",")
 	for term := range terms {
 		term = strings.TrimSpace(term)

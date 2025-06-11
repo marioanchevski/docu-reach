@@ -5,18 +5,19 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/marioanchevski/docu-reach/service/parser"
 	"github.com/marioanchevski/docu-reach/types"
 	"github.com/marioanchevski/docu-reach/utils"
 )
 
 type Handler struct {
 	documentStore types.DocumentStore
+	parser        types.Parser
 }
 
-func NewHandler(ds types.DocumentStore) *Handler {
+func NewHandler(ds types.DocumentStore, parser types.Parser) *Handler {
 	return &Handler{
 		documentStore: ds,
+		parser:        parser,
 	}
 }
 
@@ -89,8 +90,8 @@ func (h *Handler) FilterDocumentsHandler(w http.ResponseWriter, r *http.Request)
 		op = "and"
 	}
 
-	descInclude, descExclude := parser.ParseSearchTerms(descParam)
-	titleInclude, titleExclude := parser.ParseSearchTerms(titleParam)
+	descInclude, descExclude := h.parser.ParseSearchTerms(descParam)
+	titleInclude, titleExclude := h.parser.ParseSearchTerms(titleParam)
 
 	docFilter := types.DocumentFilter{
 		TitleInclude: titleInclude,

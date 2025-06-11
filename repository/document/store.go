@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/marioanchevski/docu-reach/service/matcher"
 	"github.com/marioanchevski/docu-reach/types"
 )
 
@@ -12,13 +11,15 @@ type InMemoryDocumentStore struct {
 	m         sync.RWMutex
 	documents map[int]*types.Document
 	idCounter int
+	matcher   types.Matcher
 }
 
-func NewInMemoryDocumentStore() *InMemoryDocumentStore {
+func NewInMemoryDocumentStore(matcher types.Matcher) *InMemoryDocumentStore {
 	return &InMemoryDocumentStore{
 		m:         sync.RWMutex{},
 		documents: make(map[int]*types.Document),
 		idCounter: 1,
+		matcher:   matcher,
 	}
 }
 
@@ -76,7 +77,7 @@ func (ds *InMemoryDocumentStore) Filter(docFilter types.DocumentFilter) []*types
 	ds.m.RLock()
 	defer ds.m.RUnlock()
 	for _, doc := range ds.documents {
-		if matcher.DocumentSatisfiesFilter(doc, docFilter) {
+		if ds.matcher.DocumentSatisfiesFilter(doc, docFilter) {
 			result = append(result, doc)
 		}
 

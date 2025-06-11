@@ -53,3 +53,11 @@ type DocumentStore interface {
 	DeleteById(id int) error
 	Filter(docFilter DocumentFilter) []*Document
 }
+
+type Matcher interface {
+	DocumentSatisfiesFilter(doc *Document, filter DocumentFilter) bool
+}
+
+type Parser interface {
+	ParseSearchTerms(searchString string) (include, exclude []string)
+}
